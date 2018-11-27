@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>MyEclipse中SVN的使用方法 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">MyEclipse中SVN的使用方法</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">MyEclipse中SVN的使用方法</h1><div class="post-meta">Jun 4, 2013<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p><strong><br>MyEclipse中的SVN操作手册</strong></p>
+<p><strong>1.导入项目</strong></p>
+<p>点击工具栏上的【File-Import】,进入下图</p>
+<p><img src="/img/article/20150310110313085.png" alt=""></p>
+<p>（如果你的对话框中没有SVN这一条目，可能是因为你没有安装SVN插件，请安装完成后，在看这篇博客）</p>
+<p>点击Next进入下图</p>
+<p><img src="/img/article/20150310110216879.png" alt=""></p>
+<p>点击Next进入下图，输入你SVN服务器的IP地址，包括端口号和文件夹等完整路径<br><img src="/img/article/20150310110233056.png" alt=""></p>
+<p>点击Next进入下图<br><img src="/img/article/20150310110406031.png" alt=""></p>
+<p>输入用户名/密码，即可成功导入。</p>
+<p>导入完成后，出现如下图所示界面<br><img src="/img/article/20150310110348342.png" alt=""></p>
+<p>转载请注明出处：<a href="http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html" target="_blank" rel="noopener">http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html</a><br><strong>2.更新（更新到最新版本）</strong></p>
+<p>如何保证你的项目和服务器上的代码等一致，这就需要更新操作了。</p>
+<p>在你的项目上点击鼠标右键，按下图所示路径，点击【Update to HEAD】，即可同步更新你的项目了。</p>
+<p>&lt;注意： 在你点击更新后，你在本地更改了的文件一般是不会被老版本所覆盖的&gt;</p>
+<p><img src="/img/article/20150310110542783.png" alt=""><br><strong>3.锁（对要修改的文件加锁，防止文件冲突）</strong></p>
+<p>按下所示，对你将要变更的文件加锁，这样别人就不能提交你加锁了的文件，那么就不会照成文件的冲突</p>
+<hr>
+<hr>
+<p><strong>4.提交（项目修改后的提交）</strong></p>
+<p>1) 如果你在本地对文件进行了修改，那么该文件的图标就会被打上”*”</p>
+<p>2) 如果你在本地添加了新文件，那么该文件的图标会被打上”？”；</p>
+<p>该文件的上层节点图标会被打上”*”；</p>
+<p>3）……</p>
+<p>如下图所示的样式</p>
+<hr>
+<hr>
+<p>当你想提交你更改了的项目，则在需要提交的文件上，点击鼠标右键，按下图所示路径，点击【Commit】，</p>
+<p>&lt;注，不仅可以只在你更改了的文件上进行提交，你也可以在你更改的文件的上层节点上进行提交&gt;</p>
+<p>填写一些备注信息，来管理的你的版本信息<br><img src="/img/article/20150310110544219.png" alt=""><br><strong>5.解锁</strong></p>
+<p>当你对文件的操作完成后，要释放该文件，此时就要对文件进行解锁了。</p>
+<p>在需要解锁的文件上，点击鼠标右键，按下图所示路径，点击【Unlock】，</p>
+<p><img src="/img/article/20150310110603657.png" alt=""></p>
+<p>转载请注明出处：<a href="http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html" target="_blank" rel="noopener">http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html</a></p>
+<p><strong>6.查看历史修改</strong></p>
+<p>如果你想观察某个文件的修改历史，可以在文件上，点击鼠标右键，按下图所示路径，点击【Local History】，查看文件的版本信息。</p>
+<hr>
+<p>会出现该文件的历史修改信息，你可以根据系统提供的文件提交时间，找到你需要的信息。</p>
+<p><img src="/img/article/20150310110846130.png" alt=""></p>
+<p><strong>7.文件还原</strong></p>
+<p>当你需要对你的修改进行还原时，点击鼠标右键，按下图所示路径，点击【Local History】，查看文件的版本信息的对比。</p>
+<p><img src="/img/article/20150310110748271.png" alt=""></p>
+<p>双击时间查看需要回复的历史记录</p>
+<p><img src="/img/article/20150310110915739.png" alt=""></p>
+<p>转载请注明出处：<a href="http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html" target="_blank" rel="noopener">http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html</a></p>
+<p>———————————————————问题解决——————————————————————</p>
+<hr>
+<p>&lt;文件冲突&gt;<br><strong>1. 什么是文件冲突</strong></p>
+<p>当两个或更多开发人员对同一个文件的某几行做了修改，就会产生冲突。<br><strong>场景：</strong></p>
+<p>A和B同时更新了项目，然后</p>
+<p>A修改了JSP文件后进行</p>
+<p>1）更新</p>
+<p>2）提交</p>
+<p>B也修改此JSP文件</p>
+<p><img src="/img/article/20150310111042990.png" alt=""></p>
+<p>然后B在A提交成功后，进行更新，就会产生下图效果 这就是冲突效果。</p>
+<p><img src="/img/article/20150310110942198.png" alt=""></p>
+<p><strong>2.文件冲突解决办法</strong></p>
+<p>1） 把其中一个人改的删除，如下图所示。</p>
+<p><img src="/img/article/20150310110956752.png" alt=""></p>
+<p>2） 解决冲突后进行提交。</p>
+<p><img src="/img/article/20150310111015160.png" alt=""></p>
+<p>3）提交完成，如下图所示。</p>
+<p><img src="/img/article/20150310111142285.png" alt=""></p>
+<p><strong>３.怎么避开文件冲突</strong></p>
+<p>修改文件以前一定要对文件进行锁定！</p>
+<p>转载请注明出处：<a href="http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html" target="_blank" rel="noopener">http://blog.sina.com.cn/s/blog_8a3d83320100zhmp.html</a></p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2013/06/04/9019517/" data-id="cjozgqnj4008m6gv8wlnjersv" class="article-share-link">分享</a><div class="tags"></div><div class="post-nav"><a href="/2013/06/04/9019661/" class="pre">svn:could not open the requested svn f 解决</a><a href="/2013/06/04/9019501/" class="next">myeclipse安装svn插件的多种方式</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

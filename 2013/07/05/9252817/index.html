@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Hadoop 使用Combiner提高Map/Reduce程序效率 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Hadoop 使用Combiner提高Map/Reduce程序效率</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Hadoop 使用Combiner提高Map/Reduce程序效率</h1><div class="post-meta">Jul 5, 2013<span> | </span><span class="category"><a href="/categories/Hadoop/">Hadoop</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p>众所周知，Hadoop框架使用Mapper将数据处理成一个&lt;key,value&gt;键值对，再网络节点间对其进行整理(shuffle)，然后使用Reducer处理数据并进行最终输出。</p>
+<p>在上述过程中，我们看到至少两个性能瓶颈：</p>
+<ol>
+<li>如果我们有10亿个数据，Mapper会生成10亿个键值对在网络间进行传输，但如果我们只是对数据求最大值，那么很明显的Mapper只需要输出它所知道的最大值即可。这样做不仅可以减轻网络压力，同样也可以大幅度提高程序效率。</li>
+<li>使用专利中的国家一项来阐述数据倾斜这个定义。这样的数据远远不是一致性的或者说平衡分布的，由于大多数专利的国家都属于美国，这样不仅Mapper中的键值对、中间阶段(shuffle)的键值对等，大多数的键值对最终会聚集于一个单一的Reducer之上，压倒这个Reducer，从而大大降低程序的性能。</li>
+</ol>
+<p>Hadoop通过使用一个介于Mapper和Reducer之间的Combiner步骤来解决上述瓶颈。你可以将Combiner视为Reducer的一个帮手，它主要是为了削减Mapper的输出从而减少网络带宽和Reducer之上的负载。如果我们定义一个Combiner，MapReducer框架会对中间数据多次地使用它进行处理。</p>
+<p>如果Reducer只运行简单的分布式方法，例如最大值、最小值、或者计数，那么我们可以让Reducer自己作为Combiner。但许多有用的方法不是分布式的。以下我们使用求平均值作为例子进行讲解：</p>
+<p>Mapper输出它所处理的键值对，为了使单个DataNode计算平均值Reducer会对它收到的&lt;key,value&gt;键值对进行排序，求和。</p>
+<p>由于Reducer将它所收到的&lt;key,value&gt;键值的数目视为输入数据中的&lt;key,value&gt;键值对的数目，此时使用Combiner的主要障碍就是计数操作。我们可以重写MapReduce程序来明确的跟踪计数过程。</p>
+<p>代码如下：</p>
+<p>[java]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li>package com;</li>
+<li></li>
+<li>import java.io.IOException;</li>
+<li></li>
+<li>import org.apache.hadoop.conf.Configuration;</li>
+<li>import org.apache.hadoop.conf.Configured;</li>
+<li>import org.apache.hadoop.fs.Path;</li>
+<li>import org.apache.hadoop.io.DoubleWritable;</li>
+<li>import org.apache.hadoop.io.LongWritable;</li>
+<li>import org.apache.hadoop.io.Text;</li>
+<li>import org.apache.hadoop.mapreduce.Job;</li>
+<li>import org.apache.hadoop.mapreduce.Mapper;</li>
+<li>import org.apache.hadoop.mapreduce.Reducer;</li>
+<li>import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;</li>
+<li>import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;</li>
+<li>import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;</li>
+<li>import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;</li>
+<li>import org.apache.hadoop.util.Tool;</li>
+<li>import org.apache.hadoop.util.ToolRunner;</li>
+<li></li>
+<li>public class AveragingWithCombiner extends Configured implements Tool {</li>
+<li></li>
+<li>public static class MapClass extends Mapper&lt;LongWritable,Text,Text,Text&gt; {</li>
+<li></li>
+<li>static enum ClaimsCounters { MISSING, QUOTED };</li>
+<li>// Map Method</li>
+<li>public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {</li>
+<li>String fields[] = value.toString().split(“,”, -20);</li>
+<li>String country = fields[4];</li>
+<li>String numClaims = fields[8];</li>
+<li></li>
+<li>if (numClaims.length() &gt; 0 &amp;&amp; !numClaims.startsWith(“\””)) {</li>
+<li>context.write(new Text(country), new Text(numClaims + “,1”));</li>
+<li>}</li>
+<li>}</li>
+<li>}</li>
+<li></li>
+<li>public static class Reduce extends Reducer&lt;Text,Text,Text,DoubleWritable&gt; {</li>
+<li></li>
+<li>// Reduce Method</li>
+<li>public void reduce(Text key, Iterable<text> values, Context context) throws IOException, InterruptedException {</text></li>
+<li>double sum = 0;</li>
+<li>int count = 0;</li>
+<li>for (Text value : values) {</li>
+<li>String fields[] = value.toString().split(“,”);</li>
+<li>sum += Double.parseDouble(fields[0]);</li>
+<li>count += Integer.parseInt(fields[1]);</li>
+<li>}</li>
+<li>context.write(key, new DoubleWritable(sum/count));</li>
+<li>}</li>
+<li>}</li>
+<li></li>
+<li>public static class Combine extends Reducer&lt;Text,Text,Text,Text&gt; {</li>
+<li></li>
+<li>// Reduce Method</li>
+<li>public void reduce(Text key, Iterable<text> values, Context context) throws IOException, InterruptedException {</text></li>
+<li>double sum = 0;</li>
+<li>int count = 0;</li>
+<li>for (Text value : values) {</li>
+<li>String fields[] = value.toString().split(“,”);</li>
+<li>sum += Double.parseDouble(fields[0]);</li>
+<li>count += Integer.parseInt(fields[1]);</li>
+<li>}</li>
+<li>context.write(key, new Text(sum+”,”+count));</li>
+<li>}</li>
+<li>}</li>
+<li></li>
+<li>// run Method</li>
+<li>public int run(String[] args) throws Exception {</li>
+<li>// Create and Run the Job</li>
+<li>Job job = new Job();</li>
+<li>job.setJarByClass(AveragingWithCombiner.class);</li>
+<li></li>
+<li>FileInputFormat.addInputPath(job, new Path(args[0]));</li>
+<li>FileOutputFormat.setOutputPath(job, new Path(args[1]));</li>
+<li></li>
+<li>job.setJobName(“AveragingWithCombiner”);</li>
+<li>job.setMapperClass(MapClass.class);</li>
+<li>job.setCombinerClass(Combine.class);</li>
+<li>job.setReducerClass(Reduce.class);</li>
+<li>job.setInputFormatClass(TextInputFormat.class);</li>
+<li>job.setOutputFormatClass(TextOutputFormat.class);</li>
+<li></li>
+<li>job.setOutputKeyClass(Text.class);</li>
+<li>job.setOutputValueClass(Text.class);</li>
+<li></li>
+<li>System.exit(job.waitForCompletion(true) ? 0 : 1);</li>
+<li>return 0;</li>
+<li>}</li>
+<li></li>
+<li>public static void main(String[] args) throws Exception {</li>
+<li>int res = ToolRunner.run(new Configuration(), new AveragingWithCombiner(), args);</li>
+<li>System.exit(res);</li>
+<li>}</li>
+<li></li>
+<li>}</li>
+</ol>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2013/07/05/9252817/" data-id="cjozgqnpl00my6gv89ymii45f" class="article-share-link">分享</a><div class="tags"><a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Combiner/">Combiner</a><a href="/tags/大数据/">大数据</a></div><div class="post-nav"><a href="/2013/07/05/9253149/" class="pre">hadoop的一些名词解释</a><a href="/2013/07/05/9250511/" class="next">第三章 AOP 自动创建代理</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

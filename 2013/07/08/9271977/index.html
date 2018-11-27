@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>HDFS基础概念 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">HDFS基础概念</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">HDFS基础概念</h1><div class="post-meta">Jul 8, 2013<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><h2 id="数据块（block）"><a href="#数据块（block）" class="headerlink" title="数据块（block）"></a>数据块（block）</h2><p>HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的数据块。</p>
+<p>和普通文件系统相同的是，HDFS中的文件是被分成64M一块的数据块存储的。</p>
+<p>不同于普通文件系统的是，HDFS中，如果一个文件小于一个数据块的大小，并不占用整个数据块存储空间。</p>
+<h2 id="NameNode和DataNode"><a href="#NameNode和DataNode" class="headerlink" title="NameNode和DataNode"></a>NameNode和DataNode</h2><p>HDFS体系结构中有两类节点，一类是NameNode，又叫”元数据节点”；另一类是DataNode，又叫”数据节点”。这两类节点分别承担Master和Worker具体任务的执行节点。</p>
+<p>1）元数据节点用来管理文件系统的命名空间</p>
+<p>其将所有的文件和文件夹的元数据保存在一个文件系统树中。</p>
+<p>这些信息也会在硬盘上保存成以下文件：命名空间镜像(namespace image)及修改日志(edit log)</p>
+<p>其还保存了一个文件包括哪些数据块，分布在哪些数据节点上。然而这些信息并不存储在硬盘上，而是在系统启动的时候从数据节点收集而成的。</p>
+<p>2）数据节点是文件系统中真正存储数据的地方。</p>
+<p>客户端(client)或者元数据信息(namenode)可以向数据节点请求写入或者读出数据块。</p>
+<p>其周期性的向元数据节点回报其存储的数据块信息。</p>
+<p>3）从元数据节点（secondary namenode）</p>
+<p>从元数据节点并不是元数据节点出现问题时候的备用节点，它和元数据节点负责不同的事情。</p>
+<p>其主要功能就是周期性将元数据节点的命名空间镜像文件和修改日志合并，以防日志文件过大。这点在下面会相信叙述。</p>
+<p>合并过后的命名空间镜像文件也在从元数据节点保存了一份，以防元数据节点失败的时候，可以恢复。</p>
+<h2 id="元数据节点目录结构"><a href="#元数据节点目录结构" class="headerlink" title="元数据节点目录结构"></a>元数据节点目录结构</h2><p><img src="/img/article/http://images.51cto.com/files/uploadimg/20120705/1053290.png.png" alt=""></p>
+<p>VERSION文件是java properties文件，保存了HDFS的版本号。</p>
+<p>layoutVersion是一个负整数，保存了HDFS的持续化在硬盘上的数据结构的格式版本号。</p>
+<p>namespaceID是文件系统的唯一标识符，是在文件系统初次格式化时生成的。</p>
+<p>cTime此处为0</p>
+<p>storageType表示此文件夹中保存的是元数据节点的数据结构。</p>
+<blockquote>
+</blockquote>
+<p>namespaceID=1232737062<br>cTime=0<br>storageType=NAME_NODE<br>layoutVersion=-18</p>
+<h2 id="数据节点的目录结构"><a href="#数据节点的目录结构" class="headerlink" title="数据节点的目录结构"></a>数据节点的目录结构</h2><p><img src="/img/article/http://images.51cto.com/files/uploadimg/20120705/1053291.png.png" alt=""></p>
+<p>数据节点的VERSION文件格式如下：</p>
+<blockquote>
+</blockquote>
+<p>namespaceID=1232737062<br>storageID=DS-1640411682-127.0.1.1-50010-1254997319480<br>cTime=0<br>storageType=DATA_NODE<br>layoutVersion=-18</p>
+<blockquote>
+</blockquote>
+<h2 id="文件系统命名空间映像文件及修改日志"><a href="#文件系统命名空间映像文件及修改日志" class="headerlink" title="文件系统命名空间映像文件及修改日志"></a>文件系统命名空间映像文件及修改日志</h2><p>当文件系统客户端(client)进行写操作时，首先把它记录在修改日志中(edit log)</p>
+<p>元数据节点在内存中保存了文件系统的元数据信息。在记录了修改日志后，元数据节点则修改内存中的数据结构。</p>
+<p>每次的写操作成功之前，修改日志都会同步(sync)到文件系统。</p>
+<p>fsimage文件，也即命名空间映像文件，是内存中的元数据在硬盘上的checkpoint，它是一种序列化的格式，并不能够在硬盘上直接修改。</p>
+<p>同数据的机制相似，当元数据节点失败时，则最新checkpoint的元数据信息从fsimage加载到内存中，然后逐一重新执行修改日志中的操作。</p>
+<p>从元数据节点就是用来帮助元数据节点将内存中的元数据信息checkpoint到硬盘上的</p>
+<p>checkpoint的过程如下：</p>
+<p>从元数据节点通知元数据节点生成新的日志文件，以后的日志都写到新的日志文件中。</p>
+<p>从元数据节点用http get从元数据节点获得fsimage文件及旧的日志文件。</p>
+<p>从元数据节点将fsimage文件加载到内存中，并执行日志文件中的操作，然后生成新的fsimage文件。</p>
+<p>从元数据节点奖新的fsimage文件用http post传回元数据节点</p>
+<p>元数据节点可以将旧的fsimage文件及旧的日志文件，换为新的fsimage文件和新的日志文件(第一步生成的)，然后更新fstime文件，写入此次checkpoint的时间。</p>
+<p>这样元数据节点中的fsimage文件保存了最新的checkpoint的元数据信息，日志文件也重新开始，不会变的很大了。</p>
+<p><img src="/img/article/http://images.51cto.com/files/uploadimg/20120705/1053292.jpg.png" alt=""></p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2013/07/08/9271977/" data-id="cjozgqnpz00ni6gv8gz741nie" class="article-share-link">分享</a><div class="tags"></div><div class="post-nav"><a href="/2013/07/15/9333521/" class="pre">第四章 Spring与JDBC的整合</a><a href="/2013/07/08/9269461/" class="next">第三章 AOP 编程选择</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

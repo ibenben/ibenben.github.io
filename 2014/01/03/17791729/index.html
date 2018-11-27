@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>JRainbow二次开发手册 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">JRainbow二次开发手册</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">JRainbow二次开发手册</h1><div class="post-meta">Jan 3, 2014<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p><strong>插件获取</strong></p>
+<p>百度网盘：<a href="http://pan.baidu.com/s/1c0GcDMg&amp;third=15" target="_blank" rel="noopener">http://pan.baidu.com/s/1c0GcDMg&amp;third=15</a><br><strong>开发流程</strong></p>
+<p>创建数据库及表-&gt;JRainbow生成源码-&gt;修改源码以满足需求</p>
+<p><strong>数据表的创建</strong></p>
+<p>在创建数据表的时候，如果你需要使用本插件自动生成Extjs的页面代码的话。最好是把表及表字段的comment属性，用于页面的标签显示。</p>
+<p>如:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DROP TABLE IF EXISTS `rainbow`.`department`;</span><br><span class="line">CREATE TABLE  `rainbow`.`department` (</span><br><span class="line">  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT &apos;ID&apos;,</span><br><span class="line">  `name` varchar(45) DEFAULT NULL COMMENT &apos;部门名称&apos;,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT=&apos;部门&apos;;</span><br></pre></td></tr></table></figure>
+<p><strong>页面显示</strong></p>
+<p>如果所有的源码都由JRainbow生成的话，直接通过tomcat就可以显示系统的操作功能。如下图所示。</p>
+<p><img src="/img/article/20140103153845109.png" alt=""></p>
+<p><strong>源码目录</strong></p>
+<p>当然，上面由JRainbow生成的代码及页面只是一些简单CRUD功能。你也可以对生成的源码进行修改进行二次开发。</p>
+<p><img src="/img/article/20140103153911062.png" alt=""></p>
+<p>Src包下的源码就不多说了，跟平时大家开发时是一样的。</p>
+<p>整个生成的源码就两个配置文件。一是Spring的配置文件applicationContext.xml及web配件文件web.xml。如有需求可去修改。</p>
+<p>所有的css及JavaScript的引用都在index.jsp中。如果你的页面使用的是我原本提供的框架模式的话。这个页面基本不需要进行修改。</p>
+<p>Extjs4框架的库文件在js/extjs中。个人封好的JavaScript文件夹在js/common目录下。与数据页面相关的JavaScrip文件在js/pages下。</p>
+<p>页面JavaScript的入口是main.js。</p>
+<p>左边菜单栏是LeftMenu.js。JRainbow生成的源码，菜单栏的数据源是data/MenuData.json。这里你可以使用数据表的形式把这部分数据保存起来。后期好满足权限控制的需求。</p>
+<p>其它的也没什么太重要的了。</p>
+<p><strong>反馈</strong></p>
+<p>在使用插件的过程中有遇到什么问题或者有什么好的建议请联系我。</p>
+<p>QQ：283021581</p>
+<p>手机：18565084465</p>
+<p>个人博客：<a href="http://blog.csdn.net/jrainbow" target="_blank" rel="noopener">http://blog.csdn.net/jrainbow</a></p>
+<p>新版本的发布及插件的信息汇总都将发布在我的个人博客上。</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2014/01/03/17791729/" data-id="cjozgqnf100106gv8lvkiq4kh" class="article-share-link">分享</a><div class="tags"></div><div class="post-nav"><a href="/2014/01/06/17913455/" class="pre">JRainbow开发进度</a><a href="/2014/01/03/17784195/" class="next">JRainbow的简单介绍</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

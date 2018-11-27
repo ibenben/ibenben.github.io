@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>使用SVN进行项目版本管理 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">使用SVN进行项目版本管理</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">使用SVN进行项目版本管理</h1><div class="post-meta">Jun 4, 2013<span> | </span><span class="category"><a href="/categories/svn/">svn</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p><strong>1.摘要</strong></p>
+<p>本文描述了利用SVN进行项目版本管理的方法，涉及项目版本号命名规则、SVN目录结构、第三方代码库的管理、版本创建、发布、修订、合并等行为的方法和原则。</p>
+<p><strong>2.版本号命名规则</strong></p>
+<p>版本号采用主版本号.次版本号.修订号组成。版本的重大变化主版本号增1，次版本号和修订号归零。版本的相对较小的变化主版本号维持不变，次版本号增1，修订号归零。当一个版本发布后出现了bug需要修订，此时，主、次版本号不变，修订号增1。</p>
+<p>注意：对于主动性的程序功能性的变化，应该增加主或次版本号，不应该通过修订号来反映。修订号只用于对已发布版本的bug修订，一个版本的修订号的大小某种程度上可以反映一个版本发布后的稳定情况。</p>
+<p><strong>3.SVN目录结构</strong></p>
+<p>**</p>
+<p><em>项目结构</em></p>
+<p><img src="/img/article/http://hi.csdn.net/attachment/201112/29/0_1325145838JLS6.gif.png" alt=""><br><em>第三方库结构</em></p>
+<p>以项目名称作为SVN仓库名称为项目创建独立的项目仓库。仓库主要结构分为branches和tags。branches为工作目录，tags为发布目录。项目使用到的第三方库独立出来单独组件项目仓库，为整个公司的所有项目所共享，仓库名称为vendor。</p>
+<p><strong>3.1项目结构</strong></p>
+<p>branches</p>
+<p>分支，存放未发布版本。具体的某个版本存放在其下的一个以“RB-版本号”规则命名的文件夹。上图示例为当前存在两个正在开发的版本RB-2.0和RB3.0。分支是开发人员的工作目录，是版本实现过程中的中间成果，具有临时性。版本发布后，相应的分支即可销毁。</p>
+<p>tags</p>
+<p>标签，存放已发布版本。具体的某个版本存放在其下的一个以“REL-版本号”规则命名的文件夹。上图示例为当前存在两个已发布版本REL-1.0和REL-1.1。该目录只读，即不允许对任何已发布版本做任何修改。</p>
+<p>版本内部结构</p>
+<p>doc：文档存放目录</p>
+<p>src：源码存放目录</p>
+<p>bin：可执行文件、动态库、脚本、配置文件等发布项及pdb、mapfile、obj存放目录。</p>
+<p>vendor</p>
+<p>存放第三方库的变更记录文件change.xls。由于第三方库不常变动且库大，若与项目代码存放在一起，则签出代码量会过大，耗时长。因此项目内部仅存放一个变更记录文件。倘若出现第三库存在变更，例如，某项目从3.0开始，xerces库升级到2.8，则在change.xls文件中登记即可，change.xls结构如下表所示。<br>|库名|库版本|项目版本|变更日期|备注|<br>| – | – | – | – | – |<br>|ace|4.5|1.0|2010-1-1| - |<br>|boost|1.39|1.0|2010-1-1| - |<br>|xerces|2.6|1.0|2010-1-1| - |<br>|xerces|2.8|3.0|2011-12-29| - |<br><em>上表第4行表示在项目3.0时，xerces库从2.6升级到了2.8</em></p>
+<p><strong>3.2第三方库结构</strong></p>
+<p>第三方库单独成立SVN仓库，位置级别上升为与各项目平级，为公司内各项目所共享，其结构见上图。</p>
+<p><strong>4.常见操作</strong></p>
+<p><strong>4.1新建版本</strong></p>
+<p>当确定需要建立一个版本时，则需要在branches下创建一个相应的版本分支，用于版本实现过程中的配置项管理。分支的创建可以从头创建也可以基于tags中的已发布版本创建。例如，要在REL-1.1的基础上开发2.0，则从tags\REL-1.1创建一个RB-2.0。</p>
+<p><strong>4.2日常工作</strong></p>
+<p>项目经理在给开发人员分派任务时必须制定版本号，即任务所属版本。开发人员根据任务的版本号属性在相应的工作分支中实现和提交工作成果物。这样，开发人员只需要知道任务所属版本号，无需关心版本之间的关系。项目经理需要对版本及其之间的关系有清晰的认识和规划。</p>
+<p><strong>4.3版本发布</strong></p>
+<p>当一个版本进入待发布状态后，需要为版本创建发布标签，即从版本分支创建一个版本标签。如2.0，则从branches\RB-2.0创建一个tags\REL-2.0。版本发布人员必须从tags下取发布项进行发布，杜绝发布人员从分支或者其他地方获取发布项进行发布。</p>
+<p><strong>4.4版本修订</strong></p>
+<p>当一个已发布版本出现bug需要修订时，需要从相应的已发布版本中创建一个分支版本。例如2.0发布后出现bug，则从tags\REL-2.0创建一个branches\RB-2.0.1。注意，修订号必须增加，版本不能回退也不能原地变化，即不管是新功能还是bug修订，只要是变更，版本号必增。带修订版本进入待发布状态后，则进入版本发布流程。</p>
+<p><strong>4.5版本合并</strong></p>
+<p>当多个版本处于并行工作状态下，例如RB-1.0.1（修复1.0发布后的bug）和RB-1.1(1.0发布后，在此基础上增加的新功能)两个版本并行工作，RB-1.0.1先于RB-1.1完成并发布， 那么RB-1.0.1发布后会创建REL-1.0.1，需要将REL-1.0.1的修改合并到RB-1.1，否则会出现1.0.1修改过的bug在新版本1.1中又重新出现了。</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2013/06/04/9019917/" data-id="cjozgqnj7008s6gv8mc2k20yv" class="article-share-link">分享</a><div class="tags"><a href="/tags/SVN/">SVN</a><a href="/tags/项目管理/">项目管理</a></div><div class="post-nav"><a href="/2013/06/04/9020185/" class="pre">解决Ajax全局变量赋值的问题</a><a href="/2013/06/04/9019719/" class="next">MyEclipse共享项目到SVN服务器</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>myeclipse安装svn插件的多种方式 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">myeclipse安装svn插件的多种方式</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">myeclipse安装svn插件的多种方式</h1><div class="post-meta">Jun 4, 2013<span> | </span><span class="category"><a href="/categories/svn/">svn</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p>方法一：在线安装</p>
+<p>1.打开HELP-&gt;MyEclipse Configuration</p>
+<p>Center。切换到SoftWare标签页。</p>
+<p>2.点击Add Site 打开对话框，在对话框Name输入Svn，URL中输入：<a href="http://subclipse.tigris.org/update_1.6.x" target="_blank" rel="noopener">http://subclipse.tigris.org/update_1.6.x</a><br>3.在左边栏中找到Personal Site中找到SVN展开。将Core SVNKit Library和Optional JNA<br>Library添加(右键Add to Profile)，Subclipse下面的Subclipse Integration for Mylyn<br>3.0可以不添加（特别注意，此处不要添加）。<br>4.在右下角窗格(Pending Changes )中点击Apply。安装重启后MyEclipse即可。方法二：link安装<br>安装subclipse, MyEclipse9.0 SVN插件<br>1、从官网下载site-1.6.10.zip文件,网址是:subclipse.tigris.org,<br>2、从中解压出features与 plugins文件夹，复制到E:\MyEclipse\myPlugin\svn里面，其它的*.xml文件不要。<br>3、在 E:\MyEclipse\MyEclipse9.0\dropins下新建文件svn.link,内容是:path=E:\MyEclipse \myPlugin\svn保存。<br>4、(唛呆儿:这一步不确定，先不要删除)删除E:\MyEclipse\MyEclipse8.5\configuration \org.eclipse.update文件夹<br>5、重启myeclipse就一切正常了。[/size]<br>以上两种方法都尝试成功方法三:直接解压<br>下载SVN插件：site-1.6.10.zip<br>解压后将其全部文件拷贝至：D:\Program Files\Genuitec\MyEclipse 8.5\dropins（MyEclipse的安装目录）<br>重启MyEclipse即可出现SVN！</p>
+<p>方法四：肯定可行的方法</p>
+<p>1、下载最新的SVN包：<br><a href="http://subclipse.tigris.org/servlets/ProjectDocumentList?folderID=2240" target="_blank" rel="noopener">http://subclipse.tigris.org/servlets/ProjectDocumentList?folderID=2240</a><br>2、在你的磁盘上任意位置创建文件夹：“myplugins/svn”。名字可以任取，为了方便插件管理，建议名称为“myplugins”。<br>3、将解压的svn里的两个文件夹拷贝到“myplugins/svn”下。<br>4、复制下列java代码，修改路径并执行：<br>package app;<br>import java.io.File;<br>import java.util.ArrayList;<br>import java.util.List;<br>/**</p>
+<ul>
+<li>MyEclipse9 插件配置代码生成器<br><em>
+</em><br>*/<br>public class PluginConfigCreator<br>{<br> public PluginConfigCreator()<br> {<br> }<br> public void print(String path)<br> {<pre><code>List&lt;String&gt; list = getFileList(path);
+if (list == null)
+{
+    return;
+}
+int length = list.size();
+for (int i = 0; i &lt; length; i++)
+{
+    String result = &quot;&quot;;
+    String thePath = getFormatPath(getString(list.get(i)));
+    File file = new File(thePath);
+    if (file.isDirectory())
+    {
+        String fileName = file.getName();
+        if (fileName.indexOf(&quot;_&quot;) &lt; 0)
+        {
+            print(thePath);
+            continue;
+        }
+        String[] filenames = fileName.split(&quot;_&quot;);
+        String filename1 = filenames[0];
+        String filename2 = filenames[1];
+        result = filename1 + &quot;,&quot; + filename2 + &quot;,file:/&quot; + path + &quot;/&quot;
+                + fileName + &quot;//,4,false&quot;;
+        System.out.println(result);
+    } else if (file.isFile())
+    {
+        String fileName = file.getName();
+        if (fileName.indexOf(&quot;_&quot;) &lt; 0)
+        {
+            continue;
+        }
+        int last = fileName.lastIndexOf(&quot;_&quot;);// 最后一个下划线的位置
+        String filename1 = fileName.substring(0, last);
+        String filename2 = fileName.substring(last + 1, fileName
+                .length() - 4);
+        result = filename1 + &quot;,&quot; + filename2 + &quot;,file:/&quot; + path + &quot;/&quot;
+                + fileName + &quot;,4,false&quot;;
+        System.out.println(result);
+    }
+}
+</code></pre> }<br> public List<string> getFileList(String path)<br> {<pre><code>path = getFormatPath(path);
+path = path + &quot;/&quot;;
+File filePath = new File(path);
+if (!filePath.isDirectory())
+{
+    return null;
+}
+String[] filelist = filePath.list();
+List&lt;String&gt; filelistFilter = new ArrayList&lt;String&gt;();
+for (int i = 0; i &lt; filelist.length; i++)
+{
+    String tempfilename = getFormatPath(path + filelist[i]);
+    filelistFilter.add(tempfilename);
+}
+return filelistFilter;
+</code></pre> }<br> public String getString(Object object)<br> {<pre><code>if (object == null)
+{
+    return &quot;&quot;;
+}
+return String.valueOf(object);
+</code></pre> }<br> public String getFormatPath(String path)<br> {<pre><code>path = path.replaceAll(&quot;////&quot;, &quot;/&quot;);
+path = path.replaceAll(&quot;//&quot;, &quot;/&quot;);
+return path;
+</code></pre> }<br> public static void main(String[] args)<br> {<pre><code>/*你的插件的安装目录*/
+    String plugin = &quot;改成安装目录//Genuitec//svn&quot;;
+new PluginConfigCreator().print(plugin);
+</code></pre> }<br>}<br>这里需要注意的是修改成为刚才svn所在路径，建议改为绝对路径。比如d:/myplugins/svn/。。。<br>5、 找到“$myeclipse_home/configuration /org.eclipse.equinox.simpleconfigurator/”，打开其中的“bundles.inf”文件，为了防止分不清是不 是我们自己后加的东西，在最后面多回几次车，然后粘贴第4步运行后的代码，保存<br>6、重启myeclipse</string></li>
+</ul>
+<p>转自：<a href="http://hi.baidu.com/294286540/blog/item/f89af3014404630d738b656d.html" target="_blank" rel="noopener">http://hi.baidu.com/294286540/blog/item/f89af3014404630d738b656d.html</a></p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2013/06/04/9019501/" data-id="cjozgqnj3008j6gv82ys0yn16" class="article-share-link">分享</a><div class="tags"><a href="/tags/插件/">插件</a><a href="/tags/MyEclipse/">MyEclipse</a><a href="/tags/SVN/">SVN</a></div><div class="post-nav"><a href="/2013/06/04/9019517/" class="pre">MyEclipse中SVN的使用方法</a><a href="/2013/06/01/9004471/" class="next">第九章 关系映射 一对一关系 唯一外键方式实现一对一</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

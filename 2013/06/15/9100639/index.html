@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Ubuntu上搭建Hadoop环境(伪分布式) | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Ubuntu上搭建Hadoop环境(伪分布式)</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Ubuntu上搭建Hadoop环境(伪分布式)</h1><div class="post-meta">Jun 15, 2013<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p>首先要了解一下Hadoop的运行模式：</p>
+<p>单机模式（standalone）<br>       单机模式是Hadoop的默认模式。当首次解压Hadoop的源码包时，Hadoop无法了解硬件安装环境，便保守地选择了最小配置。在这种默认模式下所有3个XML文件均为空。当配置文件为空时，Hadoop会完全运行在本地。因为不需要与其他节点交互，单机模式就不使用HDFS，也不加载任何Hadoop的守护进程。该模式主要用于开发调试MapReduce程序的应用逻辑。<br>伪分布模式（Pseudo-Distributed Mode）<br>      伪分布模式在“单节点集群”上运行Hadoop，其中所有的守护进程都运行在同一台机器上。该模式在单机模式之上增加了代码调试功能，允许你检查内存使用情况，HDFS输入输出，以及其他的守护进程交互。<br>      全分布模式（Fully Distributed Mode）<br>     Hadoop守护进程运行在一个集群上。</p>
+<p>版本：ubuntu 13.04，hadoop 1.2.0<br><strong>1.添加hadoop用户到系统用户</strong></p>
+<p>安装前要做一件事——添加一个名为hadoop到系统用户，专门用来做Hadoop测试。</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li>~$ sudo addgroup hadoop</li>
+<li>~$ sudo adduser –ingroup hadoop hadoop</li>
+</ol>
+<p>现在只是添加了一个用户hadoop，它并不具备管理员权限，因此我们需要将用户hadoop添加到管理员组：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ sudo usermod -aG admin hadoop</strong></p>
+<p><strong>2、安装JDK</strong></p>
+<p><strong>这步网络上很多教程。这里不多说。我安装的是JDK 1.7 64位版本</strong></p>
+<hr>
+<p>3.安装ssh</p>
+<p>由于Hadoop用ssh通信，先安装ssh</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ sudo apt-get install openssh-server</strong></p>
+<p>ssh安装完成以后，先启动服务：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ sudo /etc/init.d/ssh start</strong></p>
+<p>启动后，可以通过如下命令查看服务是否正确启动：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>co<br><strong>1. ~$ ps -e | grep ssh</strong></p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348321087_5967.png.png" alt=""></p>
+<p>建立ssh无密码登录本机.首先要转换成hadoop用户:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su - hadoop</span><br></pre></td></tr></table></figure>
+<p>作为一个安全通信协议，使用时需要密码，因此我们要设置成免密码登录，生成私钥和公钥：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. hadoop@scgm-ProBook:~$ ssh-keygen -t rsa -P “”</strong></p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348321100_2702.png.png" alt=""></p>
+<p>因为我已有私钥，所以会提示是否覆盖当前私钥。第一次操作时会提示输入密码，按Enter直接过，这时会在～/home/{username}/.ssh下生成两个文件：id_rsa和id_rsa.pub，前者为私钥，后者为公钥，现在我们将公钥追加到authorized_keys中（authorized_keys用于保存所有允许以当前用户身份登录到ssh客户端用户的公钥内容）：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</strong></p>
+<p>现在可以登入ssh确认以后登录时不用输入密码：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ ssh localhost</strong></p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348318847_3515.png.png" alt=""></p>
+<p>登出：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ exit</strong></p>
+<p>第二次登录：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ ssh localhost</strong></p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348318858_5813.png.png" alt=""></p>
+<p>登出：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ exit</strong></p>
+<p>这样以后登录就不用输入密码了。</p>
+<p><strong>4.安装hadoop </strong></p>
+<p>到官网下载hadoop源文件，这里选择hadoop 1.2.0</p>
+<p>解压并放到你希望的目录中。我是放到/usr/local/hadoop</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li>~$ sudo tar xzf hadoop-1.2.0.tar.gz</li>
+<li>~$ sudo mv hadoop-1.2.0 /usr/local/hadoop</li>
+</ol>
+<p>要确保所有的操作都是在用户hadoop下完成的：</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ sudo chown -R hadoop:hadoop /usr/local/hadoop</strong></p>
+<hr>
+<p><strong>5.设定hadoop-env.sh(Java 安装路径)</strong></p>
+<p>进入hadoop目录，打开conf目录下到hadoop-env.sh，添加以下信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 (视你机器的java安装路径而定)</span><br><span class="line">            export HADOOP_HOME=/usr/local/hadoop</span><br><span class="line">            export PATH=$PATH:/usr/local/hadoop/bin</span><br></pre></td></tr></table></figure></p>
+<p>并且，让环境变量配置生效source</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. ~$ source /usr/local/hadoop/conf/hadoop-env.sh</strong></p>
+<p><strong>6.设定*-site.xml</strong></p>
+<p>首先在hadoop目录下新建几个文件夹</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li>~/hadoop$ mkdir tmp</li>
+<li>~/hadoop$ mkdir hdfs</li>
+<li>~/hadoop$ mkdir hdfs/name</li>
+<li>~/hadoop$ mkdir hdfs/data</li>
+</ol>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319264_4621.png.png" alt=""></p>
+<p><img src="/img/article/http://blog.csdn.net/hitwengqi/article/details/8008203.png" alt=""></p>
+<p>接下来编辑那三个文件：</p>
+<p>core-site.xml:</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li><configuration></configuration></li>
+<li><property></property></li>
+<li><name>fs.default.name</name></li>
+<li><value>hdfs://localhost:9000</value></li>
+<li></li>
+<li><property></property></li>
+<li><name>hadoop.tmp.dir</name></li>
+<li><value>/usr/local/hadoop/tmp</value></li>
+<li></li>
+<li></li>
+</ol>
+<p>hdfs-site.xml:</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li><configuration></configuration></li>
+<li><property></property></li>
+<li><name>dfs.replication</name></li>
+<li><value>1</value></li>
+<li></li>
+<li><property></property></li>
+<li><name>dfs.name.dir</name></li>
+<li><value>/usr/local/hadoop/hdfs/name</value></li>
+<li></li>
+<li><property></property></li>
+<li><name>dfs.data.dir</name></li>
+<li><value>/usr/local/hadoop/hdfs/data</value></li>
+<li></li>
+<li></li>
+</ol>
+<p>mapred-site.xml:</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li><configuration></configuration></li>
+<li><property></property></li>
+<li><name>mapred.job.tracker</name></li>
+<li><value>localhost:9001</value></li>
+<li></li>
+<li></li>
+</ol>
+<p><strong>7.格式化HDFS</strong></p>
+<p>通过以上步骤，我们已经设定好Hadoop单机测试到环境，接着就是启动Hadoop到相关服务，格式化namenode,secondarynamenode,tasktracker:</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li>~$ source /usr/local/hadoop/conf/hadoop-env.sh</li>
+<li>~$ hadoop namenode -format</li>
+</ol>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319304_7083.png.png" alt=""></p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319373_8173.png.png" alt=""><br><strong>8.启动Hadoop</strong></p>
+<p>接着执行start-all.sh来启动所有服务，包括namenode,datanode，start-all.sh脚本用来装载守护进程。</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy</p>
+<ol>
+<li>hadoop@ubuntu:/usr/local/hadoop$ cd bin</li>
+<li>hadoop@ubuntu:/usr/local/hadoop/bin$ start-all.sh</li>
+</ol>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319428_2412.png.png" alt=""></p>
+<p>用Java的jps命令列出所有守护进程来验证安装成功</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. hadoop@ubuntu:/usr/local/hadoop$ jps</strong></p>
+<p>出现如下列表，表明成功</p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319456_6919.png.png" alt=""></p>
+<p><strong>9.检查运行状态</strong></p>
+<p>Hadoop 管理介面：</p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319467_8820.png.png" alt=""></p>
+<p>Hadoop Task Tracker 状态：</p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319508_1488.png.png" alt=""></p>
+<p>Hadoop DFS 状态：</p>
+<p><img src="/img/article/http://blog.csdn.net/hitwengqi/article/details/8008203.png" alt=""></p>
+<p><img src="/img/article/http://img.my.csdn.net/uploads/201209/22/1348319520_8824.png.png" alt=""></p>
+<p><strong>至此，hadoop的伪分布模式已经安装成功.</strong></p>
+<hr>
+<p>当Hadoop结束时，可以通过stop-all.sh脚本来关闭Hadoop的守护进程</p>
+<p>[html]</p>
+<p>view<br> plain</p>
+<p>copy<br><strong>1. hadoop@ubuntu:/usr/local/hadoop$ bin/stop-all.sh</strong></p>
+<p><strong>10.结语</strong></p>
+<p>单机模式和伪分布模式均用于开发和调试的目的。真实Hadoop集群的运行采用的是第三种模式，即全分布模式。</p>
+<p>参考:</p>
+<p><a href="http://www.cnblogs.com/tippoint/archive/2012/10/23/2735532.html" target="_blank" rel="noopener">http://www.cnblogs.com/tippoint/archive/2012/10/23/2735532.html</a></p>
+<p><a href="http://blog.csdn.net/hitwengqi/article/details/8008203#quote" target="_blank" rel="noopener">http://blog.csdn.net/hitwengqi/article/details/8008203#quote</a></p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2013/06/15/9100639/" data-id="cjozgqnox00m06gv8mv49thye" class="article-share-link">分享</a><div class="tags"></div><div class="post-nav"><a href="/2013/06/17/9110063/" class="pre">第二章 IoC Setter注入</a><a href="/2013/06/14/9093419/" class="next">第二章 IoC Bean的初始化与延迟加载</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

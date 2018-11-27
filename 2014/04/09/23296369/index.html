@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>JRainbow0.3.0使用手册 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">JRainbow0.3.0使用手册</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">JRainbow0.3.0使用手册</h1><div class="post-meta">Apr 9, 2014<span> | </span><span class="category"><a href="/categories/JRainbow/">JRainbow</a><a href="/categories/JRainbow/Java相关/">Java相关</a><a href="/categories/JRainbow/Java相关/Spring/">Spring</a><a href="/categories/JRainbow/Java相关/Spring/Hibernate/">Hibernate</a><a href="/categories/JRainbow/Java相关/Spring/Hibernate/Eclipse-Plugin/">Eclipse Plugin</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p><strong>1. 下载</strong></p>
+<p>百度网盘地址：</p>
+<p><a href="http://pan.baidu.com/s/1gdl68Un" target="_blank" rel="noopener">http://pan.baidu.com/s/1gdl68Un</a></p>
+<p><img src="/img/article/20140409204302531.png" alt=""></p>
+<p>网盘中的三个文件分别为JRainbow0.3.0插件、32位Windows平台带JRainbow插件企业级eclipse、64位Linux平台带JRainbow插件企业级eclipse（本人自用版，带Git插件及Windowbuild插件）。</p>
+<p>如果需要其它版本的eclipse或者使用的是MyEclipse，请下载JRainbow0.3.0插件然后根据本手册的安装教程配置即可。</p>
+<p><strong>2. 支持</strong></p>
+<p>1、经测试，本插件理论上支持eclipse3.x及以上版本。</p>
+<p><strong>3. 安装</strong></p>
+<p><strong>1. 把下载回来的压缩包解压到eclipse的安装目录dropins文件夹下。</strong></p>
+<p><strong>2. 本插件暂时不支持eclipse的site安装。</strong></p>
+<p><strong>4. 使用</strong></p>
+<p><strong>1. 启动eclipse软件。在头部菜单栏中可以看到JRainbow菜单。现在JRainbow插件只有一个功能“JRainbowReverse<br> Explorer”。点击后出现JRainbow代码生成向导。</strong></p>
+<p><strong>2. DatabaseConnection Driver页面（图1）是用来填写数据库连接的相关信息的。这里与0.3.0之前的版本中的JRainbowDB<br> Browser中新建连接是的一样的。ConnectionName的下拉框可以记录以前使用过的连接配置。但如果是第一次使用或才是新的数据库连接的话，那就必须全部信息都得填写。</strong></p>
+<p><img src="/img/article/20140409204444265.png" alt=""></p>
+<p>图1</p>
+<p><strong>3. 填写完了可以点击TestDriver按钮进行测试。如果是“ConnectionSuccessful”则说明配置成功。也可以直接点击Next，配置错的话，则会提示错误。配置无误的话进行下一向导页面（图2）。</strong></p>
+<p><img src="/img/article/20140409204530921.png" alt=""></p>
+<p>图2</p>
+<p><strong>4. MultiModuleGeneration页面（图2）是用来进行代码的模块化划分的。首先是选择你的Web项目的src目录，其实这里你直接选择你的项目就可以了。</strong></p>
+<p><strong>5. 然后填写Java代码的主包。如果是新的项目的话，你可以手动的在输入框填写。如果项目中已有相关包的话，你也可以通过输入框后面的Browse…按钮选择（图3）。</strong></p>
+<p><img src="/img/article/20140409204642640.png" alt=""></p>
+<p>图3</p>
+<p><strong>6. 选择完JavaPackage后，会在Modules那出现已有的模块名。当然，也可以点击NewModule按钮增加模块(图4)。Modulename是模块的名字，用于Java的包及Extjs页面文件的模块名称，必须是英文。Menuname是菜单的名称，这是用于页面菜单栏模块菜单名称，这里可使用中文。</strong></p>
+<p>图4</p>
+<p>选中模块后（如图5中的system，是选中而不是勾选），然后勾选划分给模块的数据表，点击AddTable增加到模块中。</p>
+<p>勾选模块的数据表，点击RemoveTable可将数据表从模块中移除，回到Tables中重新选择。</p>
+<p>图5</p>
+<ol>
+<li>划分完模块后，下一步来到JRainbowApplicationGeneration页面(图6)。此页面是选择你要生成的代码，如POJO实体类,Dao类、页面文件及开发中需要的Jar包等等。</li>
+<li>点击Finish后，开始生成代码的工作，这个时候工具会有点小卡，这是由于大量使用内存造成的，后期会继续优化。别着急，等一会。等ProcessBar滚动完。</li>
+</ol>
+<p><img src="/img/article/20140409204854953.png" alt=""></p>
+<p>图6</p>
+<ol>
+<li>执行完上面的工作后，回到你的项目那看。生成代码如下：图7为Java类及Spring的配置文件。还有MenuData.json的文件是用于页面菜单的数据。这一块你可放到数据库中去，然后做权限控制等。图8中js文件夹下是一些Extjs的框架包，js/pages下是实体类生成的页面js文件袋。lib文件夹中拷贝了S2SH所需要的Jar包。</li>
+<li>了解了这些后，你可以进行二次开发工作了。</li>
+</ol>
+<p>图7</p>
+<p><img src="/img/article/20140409204953484.png" alt=""></p>
+<p>图8</p>
+<p><strong><br>五、反馈</strong></p>
+<p>在使用插件的过程中有遇到什么问题或者有什么好的建议请联系我。</p>
+<p>QQ：283021581</p>
+<p>手机：18565084465</p>
+<p>个人博客：<a href="http://blog.csdn.net/jrainbow" target="_blank" rel="noopener">http://blog.csdn.net/jrainbow</a></p>
+<p>新版本的发布及插件的信息汇总都将发布在我的个人博客上。</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2014/04/09/23296369/" data-id="cjozgqnfa001g6gv8hc7q9yik" class="article-share-link">分享</a><div class="tags"><a href="/tags/eclipse插件/">eclipse插件</a><a href="/tags/extjs4/">extjs4</a><a href="/tags/企业级/">企业级</a><a href="/tags/s2sh/">s2sh</a><a href="/tags/JRainbow/">JRainbow</a></div><div class="post-nav"><a href="/2014/04/10/23297107/" class="pre">JRainbow 0.3版本发布</a><a href="/2014/03/05/20565063/" class="next">ubuntu安装离线JDK</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

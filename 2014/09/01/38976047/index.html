@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>10个强大的Apache开源模块 | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">10个强大的Apache开源模块</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">10个强大的Apache开源模块</h1><div class="post-meta">Sep 1, 2014<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p>Apache是一款非常高效地WEB服务器，目前仍居全球最受欢迎的WEB服务器软件之首。Apache其功能强大之处在于我们可以为它开发许多模块，并作一些相应的配置，从而让我们的Apache服务器有更加个性化的功能。</p>
+<p><img src="/img/article/http://www.admin10000.com/UploadFiles/Document/201408/30/20140830133528822570.JPG.png" alt=""></p>
+<p> ##<br>　1、单点登录模块 LemonLDAP ## </p>
+<p>LemonLdap可以很棒地实现Apache的SSO功能，并且可以处理超过 20 万的用户请求。LemonLdap支持Java, PHP, .Net, Perl, Ruby, Python等Web开发技术，也就是说，只要你将WEB应用部署到Apache上，你就可以使用LemonLdap实现单点登录功能。</p>
+<p>官方网站：<a href="http://wiki.lemonldap.ow2.org/xwiki/bin/view/Main/WebHome" target="_blank" rel="noopener">http://wiki.lemonldap.ow2.org/xwiki/bin/view/Main/WebHome</a></p>
+<p> ##<br>　2、并发限制模块 limitipconn ## </p>
+<p>limitipconn 是一个 Apache 的模块，用来限制每个 IP 的并发连接数。支持 Apache 1.x 和 2.x。</p>
+<p>官方网站：<a href="http://dominia.org/djao/limitipconn.html" target="_blank" rel="noopener">http://dominia.org/djao/limitipconn.html</a></p>
+<p> ##<br>　3、日志监控模块 Apache Live Log ## </p>
+<p>Apache Live Log 是一个用Perl开发的在浏览器通过Ajax技术对Apache 日志文件进行实时监控的Apache模块。它可以根据IP地址分组显示最近的访问者。</p>
+<p>官方网站：<a href="http://www.burlaca.com/2009/02/alivelog/" target="_blank" rel="noopener">http://www.burlaca.com/2009/02/alivelog/</a></p>
+<p> ##<br>　4、负载均衡模块 mod_backhand ## </p>
+<p>mod_backhand 是一个Apache 的负载均衡模块 。每一个请求都会重定向到一个Apache服务器集群中，并利用一套“候选人算法”来选择最适合的服务器，然后将请求重定向至该服务器。</p>
+<p>官方网站：<a href="http://www.backhand.org/mod_backhand/" target="_blank" rel="noopener">http://www.backhand.org/mod_backhand/</a></p>
+<p> ##<br>　5、图像处理模块 mod_gfx ## </p>
+<p>mod_gfx是一个Apache的图像处理模块，它有一系列灵活可扩展的接口，并且可以非常方便地植入到自己的网站中，目前支持以下功能：</p>
+<ul>
+<li>改变图片大小</li>
+<li>重新取样</li>
+<li>加水印</li>
+<li>图片裁剪</li>
+<li>添加文本</li>
+<li>翻转图片</li>
+<li>绘制多边形</li>
+</ul>
+<p>官方网站：<a href="http://nauticaltech.com/software/mod_gfx/" target="_blank" rel="noopener">http://nauticaltech.com/software/mod_gfx/</a></p>
+<p> ##<br>　6、压缩模块 mod-gzip-disk ## </p>
+<p>mod-gzip-disk 是一个用来对磁盘中存放的页面进行预压缩的Apache模块，和 mod-gzip 不同的是它每次请求都要重新压缩一次。</p>
+<p>使用方法：</p>
+<blockquote>
+</blockquote>
+<p>gunzip -c mod_gzip_disk-0.5.tar.gz | tar -xvpf -<br>cd mod_gzip_disk<br>sudo make module</p>
+<p>官方网站：<a href="http://www.usenix.org.uk/code/mod-gzip/" target="_blank" rel="noopener">http://www.usenix.org.uk/code/mod-gzip/</a></p>
+<p> ##<br>　7、音乐模块 mod_musicindex ## </p>
+<p>mod_musicindex 是一个 Apache 的模块，其功能类似 Perl 模块的 Apache::MP3，可友好的现实包含 MP3, Ogg Vorbis, FLAC, or MP4/AAC 文件的目录，并进行各种字段的排序，下载和在线播放，构建播放列表和进行搜索，同时提供RSS输出和Podcast种子，支持多个CSS和打包下载。</p>
+<p>官方网站：<a href="http://hacks.slashdirt.org/sw/musicindex/" target="_blank" rel="noopener">http://hacks.slashdirt.org/sw/musicindex/</a></p>
+<p> ##<br>　8、LDAP认证模块 mod_psldap ## </p>
+<p>LDAP是轻量目录访问协议，它是基于X.500标准的，但是简单多了并且可以根据需要定制。mod_psldap是一个Apache模块，它执行一个LDAP反对使用管理认证和授权过程几种不同的手段服务器认证授权。这个实现也可以通过Web界面管理记录，并验证对一个LDAP服务器，限制从阅读的密码和基于Kerberos的身份验证实现连接到LDAP服务器本身的用户。</p>
+<p>官方网站：<a href="http://sourceforge.net/projects/mod-psldap/" target="_blank" rel="noopener">http://sourceforge.net/projects/mod-psldap/</a></p>
+<p> ##<br>　9、带宽限制模块 mod_cband ## </p>
+<p>mod_cband 是一个用来限制请求占用带宽的 Apache 模块，可以在一定程度上控制服务器的流量。</p>
+<p>官方网站：<a href="http://sourceforge.net/projects/cband/" target="_blank" rel="noopener">http://sourceforge.net/projects/cband/</a></p>
+<p> ##<br>　10、V8引擎的CGI封装 v8cgi ## </p>
+<p>v8cgi 是一个小型的 C++ 和 JS 文件的集合，允许开发者在服务器端使用 JS 语言，基本的功能包括 IO、GD、MySQL、Sockets、模板、FastCGI和 Apache 模块。</p>
+<p>官方网站：code.google.com/p/v8cgi/</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2014/09/01/38976047/" data-id="cjozgqnfz002i6gv8zmbfs2bx" class="article-share-link">分享</a><div class="tags"></div><div class="post-nav"><a href="/2014/09/05/39081553/" class="pre">Mysql:is not allowed to connect to this MySQL server</a><a href="/2014/08/26/38845639/" class="next">Nodejs+Extjs+Mongodb开发第一天  Nodejs环境搭建</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>

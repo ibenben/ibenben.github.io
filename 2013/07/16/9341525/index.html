@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>让VBOX支持USB | 笨笨个人笔记</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="/css/main.css?v=1.0.4"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body style="background:#fbfbfb;"><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">让VBOX支持USB</h1><a id="logo" href="/.">笨笨个人笔记</a><p class="description">ibenben.org</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">让VBOX支持USB</h1><div class="post-meta">Jul 16, 2013<span> | </span><span class="category"><a href="/categories/ubuntu/">ubuntu</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><p>让VBOX支持USB</p>
+<p>从<a href="http://www.oracle.com/technetwork/server-storage/virtualbox/downloads/index.html#extpack" target="_blank" rel="noopener">http://www.oracle.com/technetwork/server-storage/virtualbox/downloads/index.html#extpack</a></p>
+<p>下载： Oracle_VM_VirtualBox_Extension_Pack-4.1.18-78361.vbox-extpack</p>
+<p>并安装</p>
+<ol>
+<li>让GUEST识别USB设备</li>
+</ol>
+<p>$ sudo gedit /etc/fstab</p>
+<p>在末尾加上：</p>
+<h1 id="the-USB-group"><a href="#the-USB-group" class="headerlink" title="the USB group"></a>the USB group</h1><h1 id="对所有用户开放USB设备的读写权限"><a href="#对所有用户开放USB设备的读写权限" class="headerlink" title="对所有用户开放USB设备的读写权限"></a>对所有用户开放USB设备的读写权限</h1><p>none /proc/bus/usb/ usbfs devmode=666 0 0</p>
+<ol start="2">
+<li>开放权限给指定的用户（安全起见）</li>
+</ol>
+<p>（1）添加用户组</p>
+<p>$ sudo groupadd usbfs</p>
+<p>（2）查看usbfs用户组的gid</p>
+<p>$ cat /etc/group | grep usbfs</p>
+<p>usbfs:x:1001:</p>
+<p>（3）把用户添加到usbfs组</p>
+<p>$ sudo gedit /etc/group</p>
+<p>把</p>
+<p>usbfs:x:1001:</p>
+<p>修改成：</p>
+<p>usbfs:x:1001:gary</p>
+<p>（4）为USB设备重新设置权限/etc/fstab文件，添加两行，注意gid的差异性</p>
+<p>$ sudo gedit /etc/fstab</p>
+<p>在末尾加上:</p>
+<h1 id="1001-is-the-USB-group-IDI"><a href="#1001-is-the-USB-group-IDI" class="headerlink" title="1001 is the USB group IDI"></a>1001 is the USB group IDI</h1><p>none /proc/bus/usb usbfs devgid=1001,devmode=664 0 0</p>
+</div><script type="text/javascript" src="/js/share.js?v=1.0.4" async></script><a data-url="http://ibenben.org/2013/07/16/9341525/" data-id="cjozgqnpw00ne6gv8oaujczo1" class="article-share-link">分享</a><div class="tags"><a href="/tags/ubuntu/">ubuntu</a><a href="/tags/vbox/">vbox</a><a href="/tags/usb/">usb</a></div><div class="post-nav"><a href="/2013/08/29/10526617/" class="pre">第五章 Spring3.0 、Hibernate3.3与Struts2的整合</a><a href="/2013/07/15/9333521/" class="next">第四章 Spring与JDBC的整合</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2013-2018 <a href="/." rel="nofollow">笨笨个人笔记.</a></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=1.0.4" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.4" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.4"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.4"></script><script type="text/javascript" src="/js/prism.js?v=1.0.4"></script></div></body></html>
